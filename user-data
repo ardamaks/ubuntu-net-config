@@ -1,57 +1,18 @@
 #cloud-config
 autoinstall:
   version: 1
-  # 1. HARDWARE IDENTIFICATION & PARTITIONING
-  storage:
-    layout:
-      name: direct
-      # This tells the installer: "Find the smallest SSD and use it for OS"
-      # Or you can specify by ID: /dev/disk/by-id/scsi-SATA_VIBE_DRIVE...
-    config:
-      - type: disk
-        id: disk0
-        match:
-          size: largest # Or 'smallest' depending on your setup
-        ptable: gpt
-        wipe: superblock-recursive
-      - type: partition
-        id: partition-0
-        device: disk0
-        size: 1G
-        flag: boot
-      - type: partition
-        id: partition-1
-        device: disk0
-        size: -1 # Use the rest of the disk
-      - type: format
-        id: format-0
-        fstype: ext4
-        volume: partition-1
-      - type: mount
-        id: mount-0
-        device: format-0
-        path: /
-
-  # 2. NETWORK & IDENTITY
+  interactive-sections:
+    - none
   identity:
     hostname: vibe-sandbox
     username: admin
-    password: "$6$examp$W6S09S..." # Use a hashed password
-  ssh:
-    install-server: true
-    authorized-keys:
-      - ssh-rsa AAAAB3Nza... # Your Laptop's Public Key
-
-  # 3. AUTOMATION (The "Vibe" Setup)
+    password: "$6$examp$W6S09S.0776ne6yz9W.E0WIK6yK8.G8D9K0CjY.v.0A8A9E6C.1C6D0E6F.1C6D0E6F.1C6D0E6F/" 
+  storage:
+    layout:
+      name: direct
   packages:
-    - curl
-    - git
     - docker.io
-    - tailscale
-    - avahi-daemon # Allows 'vibe-sandbox.local' discovery
-
+    - curl
   late-commands:
-    # This runs the moment the OS is finished installing
     - curtin in-target -- bash -c "curl -fsSL https://tailscale.com/install.sh | sh"
-    - curtin in-target -- tailscale up --authkey=tskey-auth-kXXXXX --ssh
     - curtin in-target -- bash -c "curl -fsSL https://get.coollabs.io | bash"

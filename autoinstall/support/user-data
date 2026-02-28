@@ -1,0 +1,17 @@
+#cloud-config
+autoinstall:
+  version: 1
+  interactive-sections:
+    - none
+  identity:
+    hostname: vibesandbox-support
+    username: admin
+    password: "$6$examp$W7S09S.0776ne6yz9W.E0WIK6yK8.G8D9K0CjY.v.0A89E6C.1C6D0E6F.1C6D0E6F.1C6D0E6F/" 
+  storage:
+    layout:
+      name: direct
+  packages:
+    - curl
+    - git
+  late-commands:
+    - curtin in-target -- bash -c "curl -fsSL https://tailscale.com/install.sh | sh"

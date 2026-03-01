@@ -7,7 +7,7 @@ autoinstall:
   early-commands:
     - |
       set -euo pipefail
-      disk=/dev/sdc
+      disk=/dev/sdd
       expected_model='WDC WD2500BEVS-75UST0'
       expected_serial='WD-WXE608K4E303'
       echo "### DISK_SANITY_CHECK: $disk"
@@ -44,7 +44,7 @@ autoinstall:
       - id: disk-wdc
         type: disk
         match:
-          path: /dev/sdc
+          path: /dev/sdd
         ptable: gpt
         wipe: superblock-recursive
         grub_device: true

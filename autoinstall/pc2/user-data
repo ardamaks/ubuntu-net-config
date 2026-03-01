@@ -6,7 +6,7 @@ autoinstall:
 
   early-commands:
     - |
-      set -euo pipefail
+      set -eu
       disk=/dev/sdd
       expected_model='WDC WD2500BEVS-75UST0'
       expected_serial='WD-WXE608K4E303'

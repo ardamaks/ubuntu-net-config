@@ -43,8 +43,7 @@ autoinstall:
     config:
       - id: disk-wdc
         type: disk
-        match:
-          path: /dev/sdd
+        path: /dev/sdd
         ptable: gpt
         wipe: superblock-recursive
         grub_device: true

@@ -7,17 +7,21 @@ autoinstall:
   early-commands:
     - |
       set -eu
-      disk=/dev/sdd
       expected_model='WDC WD2500BEVS-75UST0'
       expected_serial='WD-WXE608K4E303'
-      echo "### DISK_SANITY_CHECK: $disk"
-      lsblk -d -o NAME,SIZE,MODEL,SERIAL "$disk" || true
-      actual_model="$(lsblk -dno MODEL "$disk" | sed 's/[[:space:]]\+$//')"
-      actual_serial="$(lsblk -dno SERIAL "$disk" | sed 's/[[:space:]]\+$//')"
-      if [ "$actual_model" != "$expected_model" ] || [ "$actual_serial" != "$expected_serial" ]; then
-        echo "ERROR: refusing to install. Expected $expected_model / $expected_serial, got $actual_model / $actual_serial" >&2
+
+      line="$(lsblk -d -P -n -o NAME,MODEL,SERIAL | grep -F "MODEL=\"$expected_model\"" | grep -F "SERIAL=\"$expected_serial\"" | head -n1 || true)"
+      if [ -z "$line" ]; then
+        echo "ERROR: target disk not found. Wanted $expected_model / $expected_serial" >&2
+        lsblk -d -o NAME,SIZE,MODEL,SERIAL || true
         exit 1
       fi
+
+      name="$(printf '%s\n' "$line" | sed -n 's/.*NAME="\([^"]*\)".*/\1/p')"
+      disk="/dev/$name"
+
+      echo "### DISK_SANITY_CHECK: $disk"
+      lsblk -d -o NAME,SIZE,MODEL,SERIAL "$disk" || true
 
   identity:
     hostname: pc2
@@ -43,7 +47,8 @@ autoinstall:
     config:
       - id: disk-wdc
         type: disk
-        path: /dev/sdd
+        match:
+          serial: "*WD-WXE608K4E303"
         ptable: gpt
         wipe: superblock-recursive
         grub_device: true

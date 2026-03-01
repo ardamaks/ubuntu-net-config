@@ -29,8 +29,7 @@ autoinstall:
       - id: disk-wdc
         type: disk
         match:
-          serial: "WD-WXE608K4E303"
-          model: "WDC WD2500BEVS-75UST0"
+          serial: "ata-WDC_WD2500BEVS-75UST0_WD-WXE608K4E303"
         ptable: gpt
         wipe: superblock-recursive
         grub_device: true
